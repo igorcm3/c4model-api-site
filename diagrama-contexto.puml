@@ -1,0 +1,14 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+title Diagrama de contexto da nova API-SITE
+
+SHOW_PERSON_OUTLINE()
+
+Person(customer, Desenvolvedor front-end, "Cliente principal, que consome a API")
+System(apiSite, API-SITE, "Nova API que retorna dados dos cursos, disciplinas, professores, valores etc.")
+System_Ext(educare, "Educare", "Sistema acadêmico legado monolitico.")
+
+Rel(customer, apiSite, "Consome a API", "realiza as requisiçÕes HTTP para a api para alimentar o site")
+Rel(educare, apiSite, "Replica os dados do sistema academico para a api utilizando mensageria")
+@enduml
