@@ -1,0 +1,76 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+!define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
+!define DEVICONS2 https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons2
+!define FONTAWESOME https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/font-awesome-5
+!define MATERIAL https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/material
+!include DEVICONS/angular.puml
+!include DEVICONS/java.puml
+!include DEVICONS/mongodb.puml
+!include DEVICONS2/spring.puml
+!include FONTAWESOME/users.puml
+!include FONTAWESOME/project_diagram.puml
+!include MATERIAL/mail.puml
+!include MATERIAL/collections_bookmark.puml
+!include MATERIAL/monetization_on.puml
+
+SHOW_PERSON_OUTLINE()
+LAYOUT_LEFT_RIGHT()
+
+AddElementTag("backendContainer", $fontColor=$ELEMENT_FONT_COLOR, $bgColor="#335DA5", $shape=EightSidedShape(), $legendText="backend container\neight sided")
+AddRelTag("async", $textColor=$ARROW_COLOR, $lineColor=$ARROW_COLOR, $lineStyle=DashedLine())
+AddRelTag("sync/async", $textColor=$ARROW_COLOR, $lineColor=$ARROW_COLOR, $lineStyle=DottedLine())
+
+title Diagrama de componentes API-SITE
+Person(customer, Desenvolvedor front-end, "Cliente principal, que consome a API")
+
+
+Container_Boundary(c1, "API-SITE") {
+  Component(authController, "Controlador de autenticação", "Spring MVC Rest Controller", "Oferece endpoints de autenticação de usuário.")
+  Component(cursosController, "Controlador de Cursos", "Spring MVC Rest Controller", "Fornece endpoints para consultas relacionadas aos cursos.")
+  Component(disciplinasController, "Controlador de Disciplinas", "Spring MVC Rest Controller", "Fornece endpoints para consultas relacionadas as disciplinas de um determinado curso.")
+  Component(filtrosController, "Controlador de Filtros", "Spring MVC Rest Controller", "Fornece endpoints para montar os filtros que são utilziados nas consultas de cursos.")
+  Component(locaisController, "Controlador de Locais", "Spring MVC Rest Controller", "Fornece endpoints para consultas relacionadas aos locais dos cursos( campis, cidades...).")
+  Component(professoresController, "Controlador de Professores", "Spring MVC Rest Controller", "Fornece endpoints para consultas relacionadas aos professores de um curso.")
+
+  Component(authService, "Componente service de autenticação", "Spring Bean", "Oferece funcionaldiades de autenticação de usuário.", $sprite="spring")
+  Component(cursosService, "Componente service Cursos", "Spring Bean", "Oferece funcionaldiades relacionadas aos cursos.", $sprite="spring")
+  Component(disciplinasService, "Componente service Disciplinas", "Spring Bean", "Oferece funcionaldiades relacionadas as disciplinas de um determinado curso.", $sprite="spring")
+  Component(filtrosService, "Componente service Filtros", "Spring Bean", "Oferece funcionaldiades relacionadas aos filtros que são utilziados nas consultas de cursos.", $sprite="spring")
+  Component(locaisService, "Componente service Locais", "Spring Bean", "Oferece funcionaldiades relacionadas aos locais dos cursos( campis, cidades...).", $sprite="spring")
+  Component(professoresService, "Componente service  Professores", "Spring Bean", "Oferece funcionaldiades relacionadas aos professores de um curso.", $sprite="spring")
+
+  Component(rabbitMQService, "Componente service  RabbitMQ", "Spring Bean", "Oferece funcionaldiades relacionadas ao consumo de mensagens do broker.", $sprite="spring")
+}
+
+System_Ext(educare, "Educare", "Sistema acadêmico legado monolítico.")
+System_Ext(rabbit, "RabbitMQ", "Broker de mensageria assincrona.")
+ContainerDb(database, "Database", "SQL Oracle Database", "Armazena os dados dos cursos, disciplinas, professores, valores etc.")
+
+Rel(authController, authService, "Usa o service para processar o retorno da requisição")
+Rel(cursosController, cursosService, "Usa o service para processar o retorno da requisição")
+Rel(disciplinasController, disciplinasService, "Usa o service para processar o retorno da requisição")
+Rel(filtrosController, filtrosService, "Usa o service para processar o retorno da requisição")
+Rel(locaisController, locaisService, "Usa o service para processar o retorno da requisição")
+Rel(professoresController, professoresService, "Usa o service para processar o retorno da requisição")
+
+Rel(customer, authController, "Realiza erquisições", "HTTPS")
+Rel(customer, cursosController, "Realiza erquisições", "HTTPS")
+Rel(customer, disciplinasController, "Realiza erquisições", "HTTPS")
+Rel(customer, filtrosController, "Realiza erquisições", "HTTPS")
+Rel(customer, locaisController, "Realiza erquisições", "HTTPS")
+Rel(customer, professoresController, "Realiza erquisições", "HTTPS")
+
+Rel(authService, database, "Lê dados de")
+Rel(cursosService, database, "Lê dados de")
+Rel(disciplinasService, database, "Lê dados de")
+Rel(filtrosService, database, "Lê dados de")
+Rel(locaisService, database, "Lê dados de")
+Rel(professoresService, database, "Lê dados de")
+
+Rel(educare, rabbit, "Envia mensagens para replicar dados", "AMQP")
+Rel(rabbit, rabbitMQService, "Recebe mensagens com os dados replicados e salva no seu banco de dados", "AMQP")
+Rel(rabbitMQService, database, "Lê e escreve dados em")
+@enduml
