@@ -7,8 +7,8 @@ SHOW_PERSON_OUTLINE()
 
 Person(customer, Desenvolvedor front-end, "Cliente principal, que consome a API")
 System(apiSite, API-SITE, "Nova API que retorna dados dos cursos, disciplinas, professores, valores etc.")
-System_Ext(educare, "Educare", "Sistema acadêmico legado monolitico.")
+System_Ext(educare, "Educare", "Sistema acadêmico legado monolítico.")
 
-Rel(customer, apiSite, "Consome a API", "realiza as requisiçÕes HTTP para a api para alimentar o site")
-Rel(educare, apiSite, "Replica os dados do sistema academico para a api utilizando mensageria")
+Rel(customer, apiSite, "Consome a API", "realiza as requisições HTTP para a api para alimentar o site")
+Rel(educare, apiSite, "Replica os dados do sistema acadêmico para a api utilizando mensageria")
 @enduml
